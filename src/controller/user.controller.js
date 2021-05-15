@@ -115,10 +115,22 @@ class UserController {
   // 删除用户
   async deleteUser(ctx, next) {
     const {id} = ctx.params
-    await sqlService.deleteByField(`admin_user`, `id`, id).catch(err => err)
+    let result = await sqlService.deleteByField(`admin_user`, `id`, id).catch(err => err)
     ctx.body = {
       meta: {
         message: '删除用户信息成功',
+        status: 200
+      },
+    }
+  }
+
+  // 分配用户角色
+  async setRole(ctx, next) {
+    const {id, roleId} = ctx.params
+    let result = await userService.setRole(id ,roleId)
+    ctx.body = {
+      meta: {
+        message: '分配用户角色成功',
         status: 200
       },
     }

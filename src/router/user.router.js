@@ -3,7 +3,7 @@ const Router = require('koa-router')
 const userRouter = new Router()
 
 const 
-  {login, getAdminMenus, getUserList, alterState, addUser, getUser, alterUser, deleteUser} 
+  {login, getAdminMenus, getUserList, alterState, addUser, getUser, alterUser, deleteUser, setRole} 
 = require('../controller/user.controller')
 const {verifyLogin, verifyAuth, handlePassword} = require('../middleware/user.middleware')
 
@@ -12,6 +12,8 @@ const {verifyLogin, verifyAuth, handlePassword} = require('../middleware/user.mi
 userRouter.post('/login', verifyLogin, login)
 // 添加管理员
 userRouter.post('/users', verifyAuth, handlePassword, addUser)
+// 分配用户角色
+userRouter.post('/users/:id/roles/:roleId', verifyAuth, setRole)
 // get
 // 获取菜单栏数据
 userRouter.get('/menus', verifyAuth, getAdminMenus)

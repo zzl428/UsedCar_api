@@ -50,6 +50,17 @@ class UserService {
     let [result] = await connection.execute(sql, [username, password,  email, mobile]).catch(err => err)
     return result
   }
+
+  // 分配角色
+  async setRole(id ,role_id) {
+    let sql = `SELECT role_Id, roleName FROM admin_role WHERE id = ${role_id}`
+    let [result] = await connection.query(sql)
+    let obj = {
+      role: result[0].roleName,
+      role_id: result[0].role_Id
+    }
+    await sqlService.alterTable(`admin_user`, id, obj)
+  }
 }
 
 module.exports = new UserService()
