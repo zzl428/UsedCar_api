@@ -45,6 +45,15 @@ class SqlService {
     let [result] = await connection.execute(sql, [value]).catch(err => err)
     return result
   }
+
+  // 获取某张表所有数据
+  async dataAllList(table, field, value, content) {
+    let sqlfrag = content || `*`
+    let sql = `SELECT ${sqlfrag} FROM ${table}`
+    if(field) sql = sql + ` WHERE ${field} = ${value}`
+    let [result] = await connection.query(sql)
+    return result 
+  }
 }
 
 module.exports = new SqlService()

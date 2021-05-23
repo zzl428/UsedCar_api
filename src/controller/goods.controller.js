@@ -8,11 +8,25 @@ class GoodsController {
     ctx.body = fs.createReadStream(`./uploads/goods/cate/logo/${logoname}`)
   }
 
+  // 访问临时商品图片
+  async showGoodPic(ctx, next) {
+    const {picname} = ctx.params
+    ctx.response.set('content-type', `file`)
+    ctx.body = fs.createReadStream(`./uploads/goods/pics/${picname}`)
+  }
+
   // 访问商品分类logo图片
   async showFile(ctx, next) {
     const {filename} = ctx.params
     ctx.response.set('content-type', `file`)
     ctx.body = fs.createReadStream(`./public/goods/cate/logo/${filename}`)
+  }
+
+  // 访问商品图片
+  async showGoodPics(ctx, next) {
+    const {filename} = ctx.params
+    ctx.response.set('content-type', `file`)
+    ctx.body = fs.createReadStream(`./uploads/goods/pics/${filename}`)
   }
 
   // 删除临时商品分类Logo图片

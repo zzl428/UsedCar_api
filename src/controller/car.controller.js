@@ -113,6 +113,106 @@ class CarController {
       }
     }
   }
+
+  // 获取汽车列表
+  async carList(ctx, next) {
+    const {form} = ctx.query
+    const result = await carService.carList(JSON.parse(form))
+    ctx.body = {
+      meta: {
+        status: 200,
+        message: `获取汽车列表成功`
+      },
+      data: {
+        result
+      }
+    }
+  }
+
+  // 删除商品
+  async removeCar(ctx, next) {
+    const {id} = ctx.params
+    await sqlService.deleteByField(`cars`, `id`, id).catch(err => err)
+    ctx.body = {
+      meta: {
+        status: 200,
+        message: `删除商品成功`
+      }
+    }
+  }
+
+  // 按id搜索商品
+  async searchCar(ctx, next) {
+    const {id} = ctx.params
+    let content = `id, brand, train, master, title, price, odograph, old_price, tranfer, card_time`
+    const result = await sqlService.searchByField(`cars`, `id`, id, content) 
+    ctx.body = {
+      meta: {
+        status: 200,
+        message: `获取商品信息成功`
+      },
+      data: {
+        result
+      }
+    }
+  }
+
+  // 编辑商品
+  async editCar(ctx, next) {
+    let {form} = ctx.query
+    form = JSON.parse(form)
+    let table = `cars`
+    let id = form.id
+    delete form.id
+    delete form.master
+    delete form.brand
+    delete form.train
+    await sqlService.alterTable(table, id, form).catch(err => err)
+    ctx.body = {
+      meta: {
+        status: 200,
+        message: `编辑商品信息成功`
+      }
+    }
+  }
+
+  // 获取参数信息
+  async carParams(ctx, next) {
+    let result = await carService.carParams()
+    ctx.body = {
+      meta: {
+        status: 200,
+        message: `获取参数信息成功`
+      },
+      data: {
+        result
+      }
+    }
+  }
+
+  // 添加商品
+  async addGood(ctx, next) {
+    const {addform, paramsform, attrsform, pics} = ctx.request.body
+    if(pics.length !== 0) {
+      pics.forEach((pic, index, arr) => {
+        arr[index] = arr[index].substr(1)
+        arr[index] = `http://${config.APP_HOST}:${config.APP_PORT}${arr[index]}`
+      })
+      addform.cover = pics[0]
+    }
+    // 插入基本信息
+    let result = await carService.addBaseInfo(addform)
+    // 插入关键字查询表 插入属性表
+    await carService.addParamsAttrs(paramsform, attrsform, result.insertId).catch(err => err)
+    // 插入图片表
+    await carService.addGoodPics(pics, result.insertId)
+    ctx.body = {
+      meta: {
+        status: 200,
+        message: `添加商品信息成功`
+      }
+    }
+  }
 }
 
 module.exports = new CarController()
