@@ -3,7 +3,8 @@ const Router = require('koa-router')
 const userRouter = new Router()
 
 const 
-  {login, getAdminMenus, getUserList, alterState, addUser, getUser, alterUser, deleteUser, setRole} 
+  {login, getAdminMenus, getUserList, alterState, addUser, getUser, alterUser, deleteUser, setRole, 
+    getVisit, weekVisit, adminWork, roleWork, goodWork} 
 = require('../controller/user.controller')
 const {verifyLogin, verifyAuth, handlePassword} = require('../middleware/user.middleware')
 
@@ -21,6 +22,16 @@ userRouter.get('/menus', verifyAuth, getAdminMenus)
 userRouter.get('/users', verifyAuth, getUserList)
 // 按id搜索用户
 userRouter.get('/users/:id', getUser)
+// 获取访问量
+userRouter.get('/welcome/visit', getVisit)
+// 获取每周访问量
+userRouter.get('/welcome/visit/week', weekVisit)
+// 获取管理员工作量
+userRouter.get('/welcome/admin/work', adminWork)
+// 获取角色工作量
+userRouter.get('/welcome/role/work', roleWork)
+// 获取商品工作量
+userRouter.get('/welcome/good/work', goodWork)
 
 // put
 // 更改用户状态

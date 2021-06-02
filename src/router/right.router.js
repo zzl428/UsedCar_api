@@ -22,6 +22,7 @@ rightRouter.get('/roles/pure', roles)
 // 获取角色信息
 rightRouter.get('/roles/:id', searchRole)
 
+
 // put
 // 修改角色信息
 rightRouter.put('/roles/:id', verifyAuth, editRole)

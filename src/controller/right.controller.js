@@ -1,5 +1,6 @@
 const rightService = require('../service/right.service')
 const sqlService = require('../service/sql.service')
+const userService = require('../service/user.service')
 
 class RightController {
   // 获取权限列表
@@ -49,6 +50,7 @@ class RightController {
   async addRole(ctx, next) {
     const {form} = ctx.query
     let result = await rightService.addRole(JSON.parse(form))
+    userService.spyTable(`spy_admin_role`, ctx.user.id, `add`)
     ctx.body = {
       meta: {
         message: `添加角色成功`,
@@ -78,6 +80,7 @@ class RightController {
     const {id} = ctx.params
     const {form} = ctx.query
     await rightService.alterRole(id, JSON.parse(form)).catch(err => err)
+    userService.spyTable(`spy_admin_role`, ctx.user.id, `edit`)
     ctx.body = {
       meta: {
         message: `修改角色信息成功`,
@@ -90,6 +93,7 @@ class RightController {
   async removeRole(ctx, next) {
     const {id} = ctx.params
     await sqlService.deleteByField(`admin_role`, `role_id`, id)
+    userService.spyTable(`spy_admin_role`, ctx.user.id, `delete`)
     ctx.body = {
       meta: {
         message: `删除角色成功`,
@@ -126,6 +130,8 @@ class RightController {
         }
       }
     }
+
+  
 }
 
 module.exports = new RightController()

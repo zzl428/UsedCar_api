@@ -3,6 +3,7 @@ const fs = require('fs')
 const config = require('../app/config')
 const carService = require('../service/car.service')
 const sqlService = require('../service/sql.service')
+const userService = require('../service/user.service')
 
 class CarController {
   // 获取分类数据
@@ -133,6 +134,7 @@ class CarController {
   async removeCar(ctx, next) {
     const {id} = ctx.params
     await sqlService.deleteByField(`cars`, `id`, id).catch(err => err)
+    userService.spyTable(`spy_admin_good`, ctx.user.id, `delete`)
     ctx.body = {
       meta: {
         status: 200,
@@ -168,6 +170,7 @@ class CarController {
     delete form.brand
     delete form.train
     await sqlService.alterTable(table, id, form).catch(err => err)
+    userService.spyTable(`spy_admin_good`, ctx.user.id, `edit`)
     ctx.body = {
       meta: {
         status: 200,
@@ -206,6 +209,7 @@ class CarController {
     await carService.addParamsAttrs(paramsform, attrsform, result.insertId).catch(err => err)
     // 插入图片表
     await carService.addGoodPics(pics, result.insertId)
+    userService.spyTable(`spy_admin_good`, ctx.user.id, `add`)
     ctx.body = {
       meta: {
         status: 200,

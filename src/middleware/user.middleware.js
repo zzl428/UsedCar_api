@@ -4,7 +4,7 @@ const sqlService = require('../service/sql.service')
 const md5password = require('../utils/passwordHandle')
 const { PUBLIC_KEY } = require('../app/config')
 
-// 验证登录
+// 验证管理员登录
 const verifyLogin = async (ctx, next) => {
   // 获取用户名和密码
   const {username, password} = ctx.request.body.form
@@ -59,9 +59,52 @@ const handlePassword = async (ctx, next) => {
   await next()
 }
 
+const verifyUser = async (ctx,next) => {
+  // 获取手机号和密码
+  const {phone, password} = ctx.request.body.form
+  // 判断手机号或密码是否为空
+  if(!phone || !password) {
+    const err = new Error(errorType.NAME_OR_PASSWORD_IS_REQUIRED)
+    return ctx.app.emit('error', err, ctx)
+  }
+  // 判断手机号不重复
+  const result = await sqlService.searchByField(`front_user`, `phone`, phone)
+  if(result) {
+    const err = new Error(errorType.USER_ALREADY_EXISTS)
+    return ctx.app.emit('error', err, ctx)
+  }
+  await next()
+}
+
+// 验证用户登录
+const verifyUserLogin = async (ctx, next) => {
+  // 获取手机号和密码
+  const {phone, password} = ctx.request.body.form
+  // 判断手机号和密码是否为空
+  if(!phone || !password) {
+    const err = new Error(errorType.NAME_OR_PASSWORD_IS_REQUIRED)
+    return ctx.app.emit('error', err, ctx)
+  }
+  // 判断手机号是否存在
+  const result = await sqlService.searchByField(`front_user`, `phone`, phone)
+  if(!result) {
+    const err = new Error(errorType.USER_NOT_EXISTS)
+    return ctx.app.emit('error', err, ctx)
+  }
+  // 判断密码是否和数据库中的一致（加密）
+  if(md5password(password) !== result.password) {
+    const err = new Error(errorType.PASSWORD_IS_INCORRECT)
+    return ctx.app.emit('error', err, ctx)
+  }
+
+  ctx.user = result
+  await next()
+} 
 
 module.exports = {
   verifyLogin,
   verifyAuth,
-  handlePassword
+  handlePassword,
+  verifyUserLogin,
+  verifyUser
 }

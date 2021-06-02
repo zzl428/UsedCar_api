@@ -9,5 +9,5 @@ const {catelogoHandler, goodsPicsHandler} = require('../middleware/file.middlewa
 // 分类logo图片上传
 uploadRouter.post('/cate/logo', verifyAuth, catelogoHandler, uploadCateLogo)
 // 商品图片上传
-uploadRouter.post('/goods/pics', verifyAuth, goodsPicsHandler, uploadGoodPics)
+uploadRouter.post('/goods/pics',  goodsPicsHandler, uploadGoodPics)
 module.exports = uploadRouter
