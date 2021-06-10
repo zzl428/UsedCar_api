@@ -3,7 +3,7 @@ const Router = require('koa-router')
 const frontRouter = new Router({prefix:'/front'})
 
 const {addUser, checkPhone, login, homeGoodList, goodsDetail, addCollect, 
-        showCollect, removeCollect, addOrders, searchByKeys, UserList, orderList, cancelOrder} 
+        showCollect, removeCollect, addOrders, searchByKeys, UserList, orderList, cancelOrder, carList} 
   = require('../controller/front.controller')
 const {verifyUser, handlePassword, verifyUserLogin, verifyAuth} = require('../middleware/user.middleware')
 
@@ -29,6 +29,8 @@ frontRouter.get('/home/goods/keys', searchByKeys)
 frontRouter.get('/users', verifyAuth, UserList)
 // 获取订单列表
 frontRouter.get('/orders', verifyAuth, orderList)
+// 获取爱车列表
+frontRouter.get('/cars', verifyAuth, carList)
 
 // delete
 // 取消收藏

@@ -142,6 +142,14 @@ class FrontService {
     let [result] = await connection.query(sql)
     return result
   }
+
+  // 获取爱车列表
+  async carList(phone) {
+    let sql = `SELECT id, title, price, card_time, cover
+              FROM cars WHERE master = '${phone}'`
+    let [result] = await connection.query(sql)
+    return result
+  } 
 }
 
 module.exports = new FrontService()

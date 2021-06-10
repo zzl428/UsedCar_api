@@ -129,8 +129,17 @@ class FrontController {
 
   // 生成订单
   async addOrders(ctx, next) {
-    const {price} = ctx.query
     const {id} = ctx.params
+    let result = await sqlService.searchByField(`orders`, `cars_id`, id)
+    if(result) {
+      return ctx.body = {
+        meta: {
+          status: 401,
+          message: `该车辆已被订购`
+        }
+      }
+    }
+    const {price} = ctx.query
     let time = Date.parse(new Date())
     let num = `${time}-${ctx.user.id}-${id}`
     num = md5password(num)
@@ -180,6 +189,20 @@ class FrontController {
       meta: {
         status: 200,
         message: `获取订单列表成功`
+      },
+      data: {
+        result
+      }
+    }
+  }
+
+  // 获取爱车列表
+  async carList(ctx, next) {
+    let result = await frontService.carList(ctx.user.phone)
+    ctx.body = {
+      meta: {
+        status: 200,
+        message: `获取爱车列表成功`
       },
       data: {
         result
