@@ -225,6 +225,21 @@ class UserController {
       }
     }
   }
+
+  // 获取用户操作数据
+  async opList(ctx, next) {
+    const {id} = ctx.params
+    let result = await userService.opList(id)
+    ctx.body = {
+      meta: {
+        message: '获取用户操作列表成功',
+        status: 200
+      },
+      data: {
+        result
+      }
+    }
+  }
 }
 
 module.exports = new UserController()

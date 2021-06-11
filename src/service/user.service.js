@@ -11,6 +11,17 @@ function dateFunc() {
   return `${y}-${m}-${d}`
 }
 
+async function opFunc(id, table, i) {
+  let sql = `SELECT 
+              JSON_ARRAYAGG(JSON_OBJECT('op', operate, 'time', createAt)) op
+            FROM ${table}
+            WHERE user_id = ${id} AND 
+                  DATE_FORMAT(createAt, '%Y-%m-%d') >= '${i.visit}' AND 
+                  DATE_FORMAT(createAt, '%Y-%m-%d') <= '${i.visit}'`
+  let [op] = await connection.query(sql)
+  if(op[0].op !== null) i[table] = op[0].op 
+}
+
 class UserService {
   // 获取菜单栏数据
   async getAdminMenus() {
@@ -155,6 +166,22 @@ class UserService {
       editTotal: result2[0].editTotal,
       deleteTotal: result3[0].deleteTotal
     }
+  }
+
+  // 获取用户操作数据
+  async opList(id) {
+    let sql = `SELECT DISTINCT SUBSTRING(createAt, 1, 10) visit
+              FROM admin_visit 
+              WHERE user_id = ${id}
+              ORDER BY createAt DESC 
+              LIMIT 0, 7`
+    let [result] = await connection.query(sql)
+    for(let i of result) {
+      await opFunc(id, 'spy_admin_user', i)
+      await opFunc(id, 'spy_admin_role', i)
+      await opFunc(id, 'spy_admin_good', i)
+    }
+    return result
   }
 }
 

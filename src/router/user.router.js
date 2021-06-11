@@ -4,7 +4,7 @@ const userRouter = new Router()
 
 const 
   {login, getAdminMenus, getUserList, alterState, addUser, getUser, alterUser, deleteUser, setRole, 
-    getVisit, weekVisit, adminWork, roleWork, goodWork} 
+    getVisit, weekVisit, adminWork, roleWork, goodWork, opList} 
 = require('../controller/user.controller')
 const {verifyLogin, verifyAuth, handlePassword} = require('../middleware/user.middleware')
 
@@ -32,6 +32,8 @@ userRouter.get('/welcome/admin/work', adminWork)
 userRouter.get('/welcome/role/work', roleWork)
 // 获取商品工作量
 userRouter.get('/welcome/good/work', goodWork)
+// 获取用户操作数据
+userRouter.get('/users/op/:id', verifyAuth, opList)
 
 // put
 // 更改用户状态
